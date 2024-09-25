@@ -181,37 +181,17 @@
 		return bprintf("%d", value);
 	}
 #else
-	#include <sys/soundcard.h>
-
-	const char *
-	vol_perc(const char *card)
+	const char *vol_perc()
 	{
-		size_t i;
-		int v, afd, devmask;
-		char *vnames[] = SOUND_DEVICE_NAMES;
-
-		if ((afd = open(card, O_RDONLY | O_NONBLOCK)) < 0) {
-			warn("open '%s':", card);
-			return NULL;
-		}
-
-		if (ioctl(afd, (int)SOUND_MIXER_READ_DEVMASK, &devmask) < 0) {
-			warn("ioctl 'SOUND_MIXER_READ_DEVMASK':");
-			close(afd);
-			return NULL;
-		}
-		for (i = 0; i < LEN(vnames); i++) {
-			if (devmask & (1 << i) && !strcmp("vol", vnames[i])) {
-				if (ioctl(afd, MIXER_READ(i), &v) < 0) {
-					warn("ioctl 'MIXER_READ(%ld)':", i);
-					close(afd);
-					return NULL;
-				}
+		char* vol = run_command("pulsemixer --get-volume");
+		for (int i = 0;; i++)
+		{
+			if (vol[i] == ' ')
+			{
+				vol[i] = '\0';
+				break;
 			}
 		}
-
-		close(afd);
-
-		return bprintf("%d", v & 0xff);
+		return vol;
 	}
 #endif

@@ -78,6 +78,7 @@ const char *uid(void);
 
 /* volume */
 const char *vol_perc(const char *card);
+const char *vol_perc(); //my
 
 /* wifi */
 const char *wifi_perc(const char *interface);
