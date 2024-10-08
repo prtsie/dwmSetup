@@ -67,10 +67,10 @@ static const struct arg args[] = {
 	/* function  format          argument */
 	{ separator, "                                                ", NULL},
 	{ datetime, "%s",  "%A %eᵗʰ of %B %Y, %H:%M:%S"},
-	{ separator, "                         ", NULL},
+	{ separator, "                    ", NULL},
 	{ keymap, "%s 󰌌", NULL},
 	{ separator, "  ", NULL},
-	{ vol_perc, " %3s%% 󰕾", NULL},
+	{ vol_perc, " %4s 󰕾", NULL},
 	{ separator, "  ", NULL},
 	{ battery_perc, " %3s%%", "BAT0"},
 	{ battery_state, " %s", "BAT0"},

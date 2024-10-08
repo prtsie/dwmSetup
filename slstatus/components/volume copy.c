@@ -181,9 +181,37 @@
 		return bprintf("%d", value);
 	}
 #else
-	const char *vol_perc()
+	#include <sys/soundcard.h>
+
+	const char *
+	vol_perc(const char *card)
 	{
-		char* vol = run_command("pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | cut --delimiter=/ --fields=2 | tr -d ' '");
-		return vol;
+		size_t i;
+		int v, afd, devmask;
+		char *vnames[] = SOUND_DEVICE_NAMES;
+
+		if ((afd = open(card, O_RDONLY | O_NONBLOCK)) < 0) {
+			warn("open '%s':", card);
+			return NULL;
+		}
+
+		if (ioctl(afd, (int)SOUND_MIXER_READ_DEVMASK, &devmask) < 0) {
+			warn("ioctl 'SOUND_MIXER_READ_DEVMASK':");
+			close(afd);
+			return NULL;
+		}
+		for (i = 0; i < LEN(vnames); i++) {
+			if (devmask & (1 << i) && !strcmp("vol", vnames[i])) {
+				if (ioctl(afd, MIXER_READ(i), &v) < 0) {
+					warn("ioctl 'MIXER_READ(%ld)':", i);
+					close(afd);
+					return NULL;
+				}
+			}
+		}
+
+		close(afd);
+
+		return bprintf("%d", v & 0xff);
 	}
 #endif
