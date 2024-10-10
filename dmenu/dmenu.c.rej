@@ -1,15 +1,12 @@
 --- dmenu.c
 +++ dmenu.c
-@@ -684,9 +684,11 @@ setup(void)
- 	swa.override_redirect = True;
- 	swa.background_pixel = scheme[SchemeNorm][ColBg].pixel;
- 	swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask;
--	win = XCreateWindow(dpy, root, x, y, mw, mh, 0,
-+	win = XCreateWindow(dpy, root, x, y, mw, mh, border_width,
- 	                    CopyFromParent, CopyFromParent, CopyFromParent,
- 	                    CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
-+	if (border_width)
-+		XSetWindowBorder(dpy, win, scheme[SchemeSel][ColBg].pixel);
- 	XSetClassHint(dpy, win, &ch);
+@@ -758,7 +800,8 @@ static void
+ usage(void)
+ {
+ 	die("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+-	    "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]");
++	    "             [-nb color] [-nf color] [-sb color] [-sf color]\n"
++	    "             [-nhb color] [-nhf color] [-shb color] [-shf color] [-w windowid]");
+ }
  
- 
+ int
