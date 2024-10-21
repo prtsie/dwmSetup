@@ -36,6 +36,7 @@ static const Rule rules[] = {
 /* layout(s) */
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
+static const int nmaxmaster  = 3;        /* maximum number of clients allowed in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
@@ -62,6 +63,7 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "kitty", NULL };
+static const char *lock[]  = { "slock", NULL };
 static const char *up_vol[]   = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "+5%",   NULL };
 static const char *down_vol[] = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "-5%",   NULL };
 static const char *mute_vol[] = { "pactl", "set-sink-mute",   "@DEFAULT_SINK@", "toggle", NULL };
@@ -72,6 +74,7 @@ static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_e,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_e,      spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_l,      spawn,          {.v = lock } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ ALTKEY,                       XK_Tab,    focusstack,     {.i = +1 } },
 	{ ALTKEY|ShiftMask,             XK_Tab,    focusstack,     {.i = -1 } },

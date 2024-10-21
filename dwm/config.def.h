@@ -1,3 +1,5 @@
+#include <X11/XF86keysym.h>
+
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
@@ -28,13 +30,13 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "ksnip",  "ksnip",      "ksnip",    0,            1,           -1 },
 };
 
 /* layout(s) */
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
+static const int nmaxmaster  = 3;        /* maximum number of clients allowed in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
@@ -61,11 +63,18 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "kitty", NULL };
+static const char *lock[]  = { "slock", NULL };
+static const char *up_vol[]   = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "+5%",   NULL };
+static const char *down_vol[] = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "-5%",   NULL };
+static const char *mute_vol[] = { "pactl", "set-sink-mute",   "@DEFAULT_SINK@", "toggle", NULL };
+static const char *screenshot_mon[] = { "flameshot", "screen", "--clipboard", NULL };
+static const char *screenshot_rect[] = { "flameshot", "gui", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_e,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_e, spawn,          {.v = termcmd } },
+	{ MODKEY|ShiftMask,             XK_e,      spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_l,      spawn,          {.v = lock } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ ALTKEY,                       XK_Tab,    focusstack,     {.i = +1 } },
 	{ ALTKEY|ShiftMask,             XK_Tab,    focusstack,     {.i = -1 } },
@@ -73,7 +82,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_a,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_s,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                       XK_w, zoom,           {0} },
+	{ MODKEY,                       XK_w,      zoom,                {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY,                       XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
@@ -90,6 +99,11 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_minus,  setgaps,        {.i = -1 } },
 	{ MODKEY,                       XK_equal,  setgaps,        {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = 0  } },
+	{ 0,                     XF86XK_AudioMute, spawn,          {.v = mute_vol } },
+    { 0,              XF86XK_AudioLowerVolume, spawn,          {.v = down_vol } },
+    { 0,              XF86XK_AudioRaiseVolume, spawn,          {.v = up_vol } },
+	{ 0,                            XK_Print,  spawn,          {.v = screenshot_rect} },
+    { ShiftMask,                    XK_Print,  spawn,          {.v = screenshot_mon} },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
